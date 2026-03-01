@@ -1,4 +1,6 @@
 streamlit
 google-generativeai
 chromadb
+
 pypdf
+python-docx
