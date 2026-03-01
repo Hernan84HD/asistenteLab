@@ -61,7 +61,7 @@ modelo = genai.GenerativeModel('gemini-2.5-flash')
 cliente_chroma = chromadb.PersistentClient(path="./base_manuales")
 coleccion = cliente_chroma.get_or_create_collection(name="control_calidad")
 
-st.title("🌾 Asistente de Laboratorio - Molinos Agro")
+st.title("LabMOA")
 
 # Panel lateral
 with st.sidebar:
@@ -181,3 +181,4 @@ if pregunta := st.chat_input("Escribí tu consulta sobre los procedimientos...")
     with st.chat_message("assistant"):
         st.markdown(respuesta)
     st.session_state.mensajes.append({"rol": "assistant", "contenido": respuesta})
+
