@@ -5,7 +5,55 @@ from pypdf import PdfReader
 import os
 import glob
 
-# Configurar la IA (usando secretos de Streamlit)
+# 1. Configuración de página (DEBE IR PRIMERO)
+st.set_page_config(page_title="Lab Molinos Agro", page_icon="🌾", layout="wide")
+
+# 2. Inyección de CSS (Estética Molinos Agro)
+estilo_molinos = """
+<style>
+    /* Fondo principal */
+    .stApp {
+        background-color: #F8F9FA;
+    }
+    /* Título principal */
+    h1 {
+        color: #005C3A !important; /* Verde Molinos */
+        font-family: 'Helvetica Neue', sans-serif;
+        font-weight: 700;
+    }
+    /* Panel lateral */
+    [data-testid="stSidebar"] {
+        background-color: #005C3A;
+    }
+    [data-testid="stSidebar"] * {
+        color: white !important;
+    }
+    /* Botones */
+    div.stButton > button:first-child {
+        background-color: #F4B21B !important; /* Dorado Molinos */
+        color: #005C3A !important;
+        font-weight: bold;
+        border: none;
+        border-radius: 8px;
+        transition: all 0.3s;
+    }
+    div.stButton > button:first-child:hover {
+        background-color: #DFA015 !important;
+        transform: scale(1.02);
+    }
+    /* Cajas de chat */
+    [data-testid="stChatMessage"] {
+        background-color: white;
+        border-radius: 10px;
+        padding: 10px;
+        box-shadow: 0px 2px 5px rgba(0,0,0,0.05);
+        margin-bottom: 10px;
+    }
+</style>
+"""
+st.markdown(estilo_molinos, unsafe_allow_html=True)
+
+# Configurar la IA
 genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
 modelo = genai.GenerativeModel('gemini-2.5-flash')
 
@@ -13,12 +61,17 @@ modelo = genai.GenerativeModel('gemini-2.5-flash')
 cliente_chroma = chromadb.PersistentClient(path="./base_manuales")
 coleccion = cliente_chroma.get_or_create_collection(name="control_calidad")
 
-st.title("Chat del Laboratorio - Molinos Agro")
+st.title("🌾 Asistente de Laboratorio - Molinos Agro")
 
 # Panel lateral
 with st.sidebar:
-    st.header("Base de Conocimiento")
-    
+    # Espacio para el logo (si subís 'logo.png' a GitHub, se muestra acá)
+    if os.path.exists("logo.png"):
+        st.image("logo.png", use_container_width=True)
+    else:
+        st.header("MOLINOS AGRO")
+        
+    st.divider()
     st.subheader("Opción 1: Subir manual")
     archivos = st.file_uploader("Subir manuales (PDF)", type=["pdf"], accept_multiple_files=True)
     if st.button("Procesar Archivos Sueltos"):
@@ -98,7 +151,7 @@ if pregunta := st.chat_input("Escribí tu consulta sobre los procedimientos...")
         fuentes_usadas = list(set([meta.get('fuente', 'Manual desconocido') for meta in resultados['metadatas'][0] if meta is not None]))
         texto_fuentes = ", ".join(fuentes_usadas)
         
-        # NUEVO: Armar el historial reciente (últimos 4 mensajes)
+        # Armar el historial reciente
         historial_texto = ""
         if len(st.session_state.mensajes) > 1:
             historial_texto = "\nHISTORIAL DE LA CONVERSACIÓN:\n"
@@ -106,7 +159,6 @@ if pregunta := st.chat_input("Escribí tu consulta sobre los procedimientos...")
                 rol = "Usuario" if msg["rol"] == "user" else "Asistente"
                 historial_texto += f"{rol}: {msg['contenido']}\n"
         
-        # Prompt actualizado con memoria
         prompt = f"""Sos un analista experto del laboratorio de control de calidad. 
         Respondé la siguiente consulta de forma técnica, directa y basándote ÚNICAMENTE en este texto de los procedimientos.
         Si la información no está en el texto proporcionado, respondé exactamente: "Esa información no figura en los manuales cargados."
