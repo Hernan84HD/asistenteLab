@@ -53,18 +53,16 @@ estilo_molinos = """
     
     /* --- NUEVOS CAMBIOS: ICONOS Y RECUADRO --- */
     
-    /* Borde del recuadro de texto a Verde y eliminar el rojo/rosa por defecto */
-    [data-testid="stChatInput"] {
+    /* Borde del recuadro de texto a Verde (Forzado al contenedor interno) */
+    [data-testid="stChatInput"] > div {
         border-color: #005C3A !important;
     }
-    [data-testid="stChatInput"]:focus-within {
+    [data-testid="stChatInput"] > div:focus-within {
         border-color: #005C3A !important;
         box-shadow: 0 0 0 2px #005C3A !important;
-        outline: none !important;
     }
-    [data-testid="stChatInput"] textarea:focus {
-        box-shadow: none !important;
-        outline: none !important;
+    [data-testid="stChatInput"] textarea {
+        caret-color: #005C3A !important; /* Color del cursor en verde */
     }
     
     /* Color del Icono del Usuario (Azul) */
