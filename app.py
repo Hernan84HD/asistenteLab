@@ -6,7 +6,8 @@ import os
 import glob
 
 # Configurar la IA
-genai.configure(api_key="AIzaSyCU7aphZTPIsezsF33qFBmUhKoTnsJUIJM")
+# BORRÁ LA LÍNEA VIEJA Y PONÉ ESTA:
+genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
 modelo = genai.GenerativeModel('gemini-2.5-flash')
 
 # Iniciar la Base de Datos
@@ -122,4 +123,5 @@ if pregunta := st.chat_input("Escribí tu consulta sobre los procedimientos...")
         
     with st.chat_message("assistant"):
         st.markdown(respuesta)
+
     st.session_state.mensajes.append({"rol": "assistant", "contenido": respuesta})
