@@ -1,0 +1,36 @@
+
+Informe del Análisis de Miscelas
+
+Día de Análisis:
+El análisis de miscelas se realiza los días 10, 20 y 30 de cada mes. En estos días, se reciben distintas muestras provenientes del área de producción, particularmente de la parte de extracción.
+
+Muestras Analizadas:
+
+1. Tanques de hexano:
+   - A estas muestras se les realiza análisis de volátiles, evaluados como a miscelas. (MAM-701)
+
+2. Muestras P120 y P122:
+   - Se realiza análisis de volátiles (como aceite). (MAM-701)
+   - Se analiza la humedad mediante Karl Fischer.
+   - A partir de estos resultados, se calculan los ppm de hexano utilizando la siguiente fórmula:
+
+     ppm de hexano = (% volátiles x 10.000) - ppm obtenidos en Karl Fischer
+
+3. Ítem 45 (agua):
+   - Se realiza el análisis de hexano por cromatografía gaseosa, siguiendo el procedimiento MAM-761. El procedimiento es el siguiente:
+     1. Pesar 6 g de agua recién retirada de la heladera en viales de 50 ml.
+     2. Tapar con septum y cerrar con precinto de aluminio.
+     3. Inyectar 5 ul de estándar interno utilizando una jeringa Hamilton de 10 ul.
+     4. Llevar a estufa a 110°C durante 10 minutos.
+     5. Retirar de la estufa y dejar reposar 2 minutos sobre la mesada.
+     6. Inyectar 500 ul de la fase gaseosa en el cromatógrafo.
+     7. Calcular la concentración de hexano residual contenido en la muestra.
+
+Procedimientos Utilizados:
+- Los análisis de volátiles se realizan de acuerdo al procedimiento: "Determinación de volátiles totales _ aceite _ miscela _ hexano _ MAM-701-CNC".
+
+Fórmula de Cálculo para PPM de Hexano:
+De los resultados de las muestras P120 y P122, se obtienen los ppm de hexano utilizando la siguiente ecuación:
+ppm de hexano = (% volátiles x 10,000) - ppm obtenidos en Karl Fischer
+
+Este informe detalla todos los pasos y procedimientos realizados durante el análisis de miscelas en el laboratorio.

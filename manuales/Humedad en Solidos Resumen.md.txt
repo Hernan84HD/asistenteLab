@@ -1,0 +1,16 @@
+| **Producto**              | **Peso de muestra (g)** | **Tiempo en estufa (min)** | **Temperatura de estufa (°C)** | **MAM**  |
+| ------------------------- | ----------------------- | -------------------------- | ------------------------------ | -------- |
+| Poroto de soja            | 10 ± 0,01               | 180                        | 130 ± 3                        | MAM-679  |
+| Poroto de soja Molido     | 10 ± 0,01               | 120                        | 103 ± 2                        | MAM-679  |
+| Harina de soja            | 5 ± 0,01                | 240                        | 103 ± 2                        | MAM-683  |
+| Harina de soja Molida     | 5 ± 0,01                | 240                        | 103 ± 2                        | MAM-683  |
+| Pellet de soja            | 5 ± 0,01                | 240                        | 103 ± 2                        | MAM-683  |
+| Pellet de soja Molido     | 5 ± 0,01                | 240                        | 103 ± 2                        | MAM-683  |
+| Pellet de girasol         | 5 ± 0,01                | 240                        | 103 ± 2                        | MAM-683  |
+| Pellet de girasol Molido  | 5 ± 0,01                | 240                        | 103 ± 2                        | MAM-683  |
+| Maíz                      | 5 ± 0,01                | 60                         | 130 ± 2                        | MAM-1058 |
+| Trigo                     | 5 ± 0,01                | 120                        | 130-133                        | MAM-1062 |
+| Trigo Molido              | 5 ± 0,01                | 120                        | 130-133                        | MAM-1062 |
+| Semilla de girasol        | 10 ± 0,01               | 75                         | 130 ± 3                        | MAM-1071 |
+| Semilla de girasol Molida | 10 ± 0,01               | 120                        | 103 ± 2                        | MAM-1071 |
+
