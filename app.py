@@ -11,6 +11,11 @@ st.set_page_config(page_title="Lab Molinos Agro", page_icon="🌾", layout="wide
 # 2. Inyección de CSS (Estética Molinos Agro)
 estilo_molinos = """
 <style>
+    /* Reducir el espacio en blanco arriba del título */
+    .block-container {
+        padding-top: 1.5rem !important;
+    }
+    
     /* Fondo principal blanco/gris muy claro */
     .stApp {
         background-color: #F8F9FA;
@@ -20,6 +25,8 @@ estilo_molinos = """
         color: #004B87 !important; /* Azul corporativo */
         font-family: 'Helvetica Neue', sans-serif;
         font-weight: 700;
+        margin-top: 0 !important;
+        padding-top: 0 !important;
     }
     /* Panel lateral Verde */
     [data-testid="stSidebar"] {
@@ -51,7 +58,7 @@ estilo_molinos = """
         margin-bottom: 10px;
     }
     
-    /* --- NUEVOS CAMBIOS: ICONOS Y RECUADRO --- */
+    /* --- CAMBIOS: ICONOS Y RECUADRO --- */
     
     /* Borde del recuadro de texto a Verde (Forzado al contenedor interno) */
     [data-testid="stChatInput"] > div {
