@@ -11,42 +11,43 @@ st.set_page_config(page_title="Lab Molinos Agro", page_icon="🌾", layout="wide
 # 2. Inyección de CSS (Estética Molinos Agro)
 estilo_molinos = """
 <style>
-    /* Fondo principal */
+    /* Fondo principal blanco/gris muy claro */
     .stApp {
         background-color: #F8F9FA;
     }
-    /* Título principal */
+    /* Título principal Azul */
     h1 {
-        color: #005C3A !important; /* Verde Molinos */
+        color: #004B87 !important; /* Azul corporativo */
         font-family: 'Helvetica Neue', sans-serif;
         font-weight: 700;
     }
-    /* Panel lateral */
+    /* Panel lateral Verde */
     [data-testid="stSidebar"] {
-        background-color: #005C3A;
+        background-color: #005C3A; /* Verde corporativo */
     }
     [data-testid="stSidebar"] * {
         color: white !important;
     }
-    /* Botones */
+    /* Botones Azules */
     div.stButton > button:first-child {
-        background-color: #F4B21B !important; /* Dorado Molinos */
-        color: #005C3A !important;
+        background-color: #004B87 !important; /* Azul corporativo */
+        color: white !important;
         font-weight: bold;
         border: none;
         border-radius: 8px;
         transition: all 0.3s;
     }
     div.stButton > button:first-child:hover {
-        background-color: #DFA015 !important;
+        background-color: #00335c !important; /* Azul más oscuro al pasar el mouse */
         transform: scale(1.02);
     }
-    /* Cajas de chat */
+    /* Cajas de chat Blancas con detalle Verde */
     [data-testid="stChatMessage"] {
         background-color: white;
         border-radius: 10px;
         padding: 10px;
         box-shadow: 0px 2px 5px rgba(0,0,0,0.05);
+        border-left: 5px solid #005C3A;
         margin-bottom: 10px;
     }
 </style>
@@ -61,7 +62,7 @@ modelo = genai.GenerativeModel('gemini-2.5-flash')
 cliente_chroma = chromadb.PersistentClient(path="./base_manuales")
 coleccion = cliente_chroma.get_or_create_collection(name="control_calidad")
 
-st.title("LabMOA")
+st.title("Asistente de Laboratorio")
 
 # Panel lateral
 with st.sidebar:
