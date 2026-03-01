@@ -13,7 +13,7 @@ estilo_molinos = """
 <style>
     /* Reducir el espacio en blanco arriba del título */
     .block-container {
-        padding-top: 1.5rem !important;
+        padding-top: 3rem !important;
     }
     
     /* Fondo principal blanco/gris muy claro */
