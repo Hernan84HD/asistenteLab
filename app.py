@@ -4,6 +4,9 @@ import chromadb
 from pypdf import PdfReader
 import os
 import glob
+import csv
+from docx import Document
+import io
 
 # 1. Configuración de página (DEBE IR PRIMERO)
 st.set_page_config(page_title="Lab Molinos Agro", page_icon="🌾", layout="wide")
@@ -92,6 +95,38 @@ modelo = genai.GenerativeModel('gemini-2.5-flash')
 cliente_chroma = chromadb.PersistentClient(path="./base_manuales")
 coleccion = cliente_chroma.get_or_create_collection(name="control_calidad")
 
+# NUEVO: Función para leer múltiples formatos
+def leer_documento(archivo_o_ruta, nombre_archivo):
+    texto = ""
+    ext = nombre_archivo.lower().split('.')[-1]
+    try:
+        if ext == 'pdf':
+            lector = PdfReader(archivo_o_ruta)
+            for pagina in lector.pages:
+                if pagina.extract_text():
+                    texto += pagina.extract_text() + "\n"
+        elif ext == 'txt':
+            if hasattr(archivo_o_ruta, 'read'):
+                texto = archivo_o_ruta.getvalue().decode('utf-8', errors='ignore')
+            else:
+                with open(archivo_o_ruta, 'r', encoding='utf-8', errors='ignore') as f:
+                    texto = f.read()
+        elif ext == 'csv':
+            if hasattr(archivo_o_ruta, 'read'):
+                contenido = archivo_o_ruta.getvalue().decode('utf-8', errors='ignore').splitlines()
+            else:
+                with open(archivo_o_ruta, 'r', encoding='utf-8', errors='ignore') as f:
+                    contenido = f.readlines()
+            for fila in csv.reader(contenido):
+                texto += " | ".join(fila) + "\n"
+        elif ext in ['doc', 'docx']:
+            doc = Document(archivo_o_ruta)
+            for para in doc.paragraphs:
+                texto += para.text + "\n"
+    except Exception as e:
+        print(f"Error con {nombre_archivo}: {e}")
+    return texto
+
 st.title("Asistente de Laboratorio")
 
 # Panel lateral
@@ -104,24 +139,23 @@ with st.sidebar:
         
     st.divider()
     st.subheader("Opción 1: Subir manual")
-    archivos = st.file_uploader("Subir manuales (PDF)", type=["pdf"], accept_multiple_files=True)
+    # Ampliamos los formatos permitidos
+    archivos = st.file_uploader("Subir manuales", type=["pdf", "txt", "csv", "docx"], accept_multiple_files=True)
     if st.button("Procesar Archivos Sueltos"):
         if archivos:
             with st.spinner('Guardando textos y fuentes...'):
                 for archivo in archivos:
-                    lector = PdfReader(archivo)
-                    texto_completo = ""
-                    for pagina in lector.pages:
-                        texto_completo += pagina.extract_text() + "\n"
+                    texto_completo = leer_documento(archivo, archivo.name)
                     
-                    pedazos = []
-                    for i in range(0, len(texto_completo), 800):
-                        pedazos.append(texto_completo[i:i+1000])
+                    if texto_completo.strip():
+                        pedazos = []
+                        for i in range(0, len(texto_completo), 800):
+                            pedazos.append(texto_completo[i:i+1000])
+                            
+                        ids = [f"{archivo.name}_{i}" for i in range(len(pedazos))]
+                        metadatos = [{"fuente": archivo.name} for _ in range(len(pedazos))]
                         
-                    ids = [f"{archivo.name}_{i}" for i in range(len(pedazos))]
-                    metadatos = [{"fuente": archivo.name} for _ in range(len(pedazos))]
-                    
-                    coleccion.upsert(documents=pedazos, ids=ids, metadatas=metadatos)
+                        coleccion.upsert(documents=pedazos, ids=ids, metadatas=metadatos)
             st.success("¡Archivos procesados correctamente!")
         else:
             st.warning("Primero seleccioná un archivo.")
@@ -133,16 +167,16 @@ with st.sidebar:
     
     if st.button("Sincronizar Carpeta"):
         if os.path.exists(ruta_carpeta):
-            archivos_pdf = glob.glob(os.path.join(ruta_carpeta, "*.pdf"))
-            if archivos_pdf:
-                with st.spinner(f'Procesando {len(archivos_pdf)} archivos...'):
-                    for ruta_archivo in archivos_pdf:
+            # Buscamos todos los formatos válidos
+            archivos_validos = []
+            for ext in ('*.pdf', '*.txt', '*.csv', '*.docx'):
+                archivos_validos.extend(glob.glob(os.path.join(ruta_carpeta, ext)))
+            
+            if archivos_validos:
+                with st.spinner(f'Procesando {len(archivos_validos)} archivos...'):
+                    for ruta_archivo in archivos_validos:
                         nombre_archivo = os.path.basename(ruta_archivo)
-                        lector = PdfReader(ruta_archivo)
-                        texto_completo = ""
-                        for pagina in lector.pages:
-                            if pagina.extract_text():
-                                texto_completo += pagina.extract_text() + "\n"
+                        texto_completo = leer_documento(ruta_archivo, nombre_archivo)
                         
                         if texto_completo.strip():
                             pedazos = []
@@ -153,9 +187,9 @@ with st.sidebar:
                             metadatos = [{"fuente": nombre_archivo} for _ in range(len(pedazos))]
                             
                             coleccion.upsert(documents=pedazos, ids=ids, metadatas=metadatos)
-                st.success(f"¡{len(archivos_pdf)} manuales sincronizados!")
+                st.success(f"¡{len(archivos_validos)} archivos sincronizados!")
             else:
-                st.warning("No se encontraron PDFs en esa carpeta.")
+                st.warning("No se encontraron archivos compatibles en esa carpeta.")
         else:
             st.error("La carpeta no existe. Creala o revisá la ruta.")
 
