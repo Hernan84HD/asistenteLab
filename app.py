@@ -5,8 +5,7 @@ from pypdf import PdfReader
 import os
 import glob
 
-# Configurar la IA
-# BORRÁ LA LÍNEA VIEJA Y PONÉ ESTA:
+# Configurar la IA (usando secretos de Streamlit)
 genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
 modelo = genai.GenerativeModel('gemini-2.5-flash')
 
@@ -20,7 +19,6 @@ st.title("Chat del Laboratorio - Molinos Agro")
 with st.sidebar:
     st.header("Base de Conocimiento")
     
-    # OPCIÓN 1: Subir archivos manualmente
     st.subheader("Opción 1: Subir manual")
     archivos = st.file_uploader("Subir manuales (PDF)", type=["pdf"], accept_multiple_files=True)
     if st.button("Procesar Archivos Sueltos"):
@@ -39,7 +37,6 @@ with st.sidebar:
                     ids = [f"{archivo.name}_{i}" for i in range(len(pedazos))]
                     metadatos = [{"fuente": archivo.name} for _ in range(len(pedazos))]
                     
-                    # Usamos UPSERT para que si lo subís de nuevo, lo actualice en vez de duplicarlo o dar error
                     coleccion.upsert(documents=pedazos, ids=ids, metadatas=metadatos)
             st.success("¡Archivos procesados correctamente!")
         else:
@@ -47,9 +44,7 @@ with st.sidebar:
 
     st.divider()
 
-    # OPCIÓN 2: Sincronizar desde una carpeta local
     st.subheader("Opción 2: Leer desde Carpeta")
-    # Por defecto busca en una carpeta llamada "manuales" al lado de app.py
     ruta_carpeta = st.text_input("Ruta de la carpeta:", value="./manuales") 
     
     if st.button("Sincronizar Carpeta"):
@@ -80,7 +75,7 @@ with st.sidebar:
         else:
             st.error("La carpeta no existe. Creala o revisá la ruta.")
 
-# Historial del Chat
+# Historial del Chat en pantalla
 if "mensajes" not in st.session_state:
     st.session_state.mensajes = []
 
@@ -103,14 +98,24 @@ if pregunta := st.chat_input("Escribí tu consulta sobre los procedimientos...")
         fuentes_usadas = list(set([meta.get('fuente', 'Manual desconocido') for meta in resultados['metadatas'][0] if meta is not None]))
         texto_fuentes = ", ".join(fuentes_usadas)
         
+        # NUEVO: Armar el historial reciente (últimos 4 mensajes)
+        historial_texto = ""
+        if len(st.session_state.mensajes) > 1:
+            historial_texto = "\nHISTORIAL DE LA CONVERSACIÓN:\n"
+            for msg in st.session_state.mensajes[-5:-1]:
+                rol = "Usuario" if msg["rol"] == "user" else "Asistente"
+                historial_texto += f"{rol}: {msg['contenido']}\n"
+        
+        # Prompt actualizado con memoria
         prompt = f"""Sos un analista experto del laboratorio de control de calidad. 
         Respondé la siguiente consulta de forma técnica, directa y basándote ÚNICAMENTE en este texto de los procedimientos.
         Si la información no está en el texto proporcionado, respondé exactamente: "Esa información no figura en los manuales cargados."
         
         TEXTO DE LOS MANUALES:
         {contexto}
+        {historial_texto}
         
-        CONSULTA: {pregunta}"""
+        CONSULTA ACTUAL: {pregunta}"""
         
         try:
             respuesta = modelo.generate_content(prompt).text
@@ -123,5 +128,4 @@ if pregunta := st.chat_input("Escribí tu consulta sobre los procedimientos...")
         
     with st.chat_message("assistant"):
         st.markdown(respuesta)
-
     st.session_state.mensajes.append({"rol": "assistant", "contenido": respuesta})
