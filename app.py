@@ -50,6 +50,26 @@ estilo_molinos = """
         border-left: 5px solid #005C3A;
         margin-bottom: 10px;
     }
+    
+    /* --- NUEVOS CAMBIOS: ICONOS Y RECUADRO --- */
+    
+    /* Borde del recuadro de texto a Verde */
+    [data-testid="stChatInput"] {
+        border-color: #005C3A !important;
+    }
+    [data-testid="stChatInput"]:focus-within {
+        border-color: #005C3A !important;
+        box-shadow: 0 0 0 1.5px #005C3A !important;
+    }
+    
+    /* Color del Icono del Usuario (Azul) */
+    [data-testid="stChatMessageAvatarUser"] {
+        background-color: #004B87 !important;
+    }
+    /* Color del Icono del Asistente (Verde) */
+    [data-testid="stChatMessageAvatarAssistant"] {
+        background-color: #005C3A !important;
+    }
 </style>
 """
 st.markdown(estilo_molinos, unsafe_allow_html=True)
@@ -182,4 +202,3 @@ if pregunta := st.chat_input("Escribí tu consulta sobre los procedimientos...")
     with st.chat_message("assistant"):
         st.markdown(respuesta)
     st.session_state.mensajes.append({"rol": "assistant", "contenido": respuesta})
-
