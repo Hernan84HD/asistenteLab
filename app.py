@@ -105,7 +105,7 @@ def leer_documento(archivo_o_ruta, nombre_archivo):
             for pagina in lector.pages:
                 if pagina.extract_text():
                     texto += pagina.extract_text() + "\n"
-        elif ext == 'txt':
+        elif ext in ['txt', 'md']:
             if hasattr(archivo_o_ruta, 'read'):
                 texto = archivo_o_ruta.getvalue().decode('utf-8', errors='ignore')
             else:
@@ -140,7 +140,7 @@ with st.sidebar:
     st.divider()
     st.subheader("Opción 1: Subir manual")
     # Ampliamos los formatos permitidos
-    archivos = st.file_uploader("Subir manuales", type=["pdf", "txt", "csv", "docx"], accept_multiple_files=True)
+    archivos = st.file_uploader("Subir manuales", type=["pdf", "txt", "csv", "doc", "docx", "md"], accept_multiple_files=True)
     if st.button("Procesar Archivos Sueltos"):
         if archivos:
             with st.spinner('Guardando textos y fuentes...'):
@@ -169,7 +169,7 @@ with st.sidebar:
         if os.path.exists(ruta_carpeta):
             # Buscamos todos los formatos válidos
             archivos_validos = []
-            for ext in ('*.pdf', '*.txt', '*.csv', '*.docx'):
+            for ext in ('*.pdf', '*.txt', '*.csv', '*.doc', '*.docx', '*.md'):
                 archivos_validos.extend(glob.glob(os.path.join(ruta_carpeta, ext)))
             
             if archivos_validos:
